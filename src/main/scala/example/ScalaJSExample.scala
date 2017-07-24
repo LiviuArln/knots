@@ -2,6 +2,7 @@ package example
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom
 import org.scalajs.dom.html
+import org.scalajs.dom.raw.{Event, HTMLCanvasElement}
 
 @JSExport
 object ScalaJSExample {
@@ -36,8 +37,91 @@ object ScalaJSExample {
     }
   }
 
+  def drawWithArrowhead(x1: Double, y1: Double, x2: Double, y2: Double, canvas: html.Canvas) = {
+    val ctx = canvas.getContext("2d")
+      .asInstanceOf[dom.CanvasRenderingContext2D]
+
+    ctx.strokeStyle = "blue"
+    ctx.fillStyle = "blue"
+    ctx.lineWidth = 1
+
+    ctx.beginPath
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.stroke
+    var startRadians = Math.atan((y2 - y1) / (x2 - x1))
+    if(x2 > x1){
+      startRadians += -90 * Math.PI / 180
+    }else
+      startRadians +=  90 * Math.PI / 180
+      println(startRadians)
+//      val startRadians = calcAngle(x1, y1, x2, y2)
+//      println(startRadians + "!!!!")
+      drawArrowhead(canvas, x1, y1, startRadians)
+  }
+
+  def calcAngle(x1: Double, y1:Double, x2: Double, y2: Double): Double = {
+    if(x2 > x1){
+      if(y2 > y1){
+        Math.atan((y2 - y1) / (x2 - x1))
+      }else{
+        if(y2 == y1){
+          println("1.0")
+          0
+        }else{
+          println("2 * math.Pi + Math.atan((y2 - y1) / (x2 - x1))")
+          2 * math.Pi + Math.atan((y2 - y1) / (x2 - x1))
+        }
+      }
+    }else{
+      if(x2 == x1){
+        if(y2 == y1){
+          0
+        }else{
+          if(y2 > y1){
+            math.Pi / 2
+          }else{
+            1.5 * math.Pi
+          }
+        }
+      }else{
+        if(y2 == y1){
+          math.Pi * 1
+        }else{
+          if(y2 > y1){
+            math.Pi + Math.atan((y2 - y1) / (x2 - x1))
+          }else{
+            math.Pi + Math.atan((y2 - y1) / (x2 - x1))
+          }
+        }
+      }
+    }
+  }
+
+  def drawArrowhead(canvas: html.Canvas, x: Double, y:Double, radians: Double) = {
+    val ctx = canvas.getContext("2d")
+      .asInstanceOf[dom.CanvasRenderingContext2D]
+
+    ctx.save
+    ctx.beginPath
+    ctx.translate(x, y)
+    ctx.rotate(radians)
+    ctx.moveTo(0, 0)
+    ctx.lineTo(5, 20)
+    ctx.lineTo(-5, 20)
+    ctx.closePath
+    ctx.restore
+    ctx.fill
+
+  }
+
   @JSExport
   def main(canvas: html.Canvas): Unit = {
-    drawLines(3,canvas)
+//    drawLines(3,canvas)
+    val context = canvas.getContext("2d")
+      .asInstanceOf[dom.CanvasRenderingContext2D]
+
+    drawWithArrowhead(10.0, 30.0, 60.0, 45.0, canvas)
+
   }
 }
