@@ -2,7 +2,6 @@ package example
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom
 import org.scalajs.dom.{CanvasRenderingContext2D, html}
-import org.scalajs.dom.raw.{Event, HTMLCanvasElement}
 
 @JSExport
 object ScalaJSExample {
@@ -28,9 +27,12 @@ object ScalaJSExample {
 
     drawArc(context, centerX, centerY, radius, 2*Math.PI, 0)
 
-    (0 to crossings).map(_*arcSize).foreach{startingAngle =>
-      drawWithArrowhead(centerX+radius*Math.cos(startingAngle),centerY-radius*Math.sin(startingAngle), centerX, centerY, canvas);
+    (0 to crossings*2-1).map(_*arcSize).foreach{startingAngle =>
+     // drawWithArrowhead(centerX+radius*Math.cos(startingAngle),centerY-radius*Math.sin(startingAngle), centerX, centerY, canvas);
     }
+
+    drawWithArrowhead(centerX+radius*Math.cos(2*arcSize),centerY-radius*Math.sin(2*arcSize), centerX+radius*Math.cos(7*arcSize),centerY-radius*Math.sin(7*arcSize), canvas);
+
   }
 
   private def drawArc(context: CanvasRenderingContext2D, centerX: Double, centerY: Double, radius: Double, arcSize: Double, startingAngle: Double) = {
