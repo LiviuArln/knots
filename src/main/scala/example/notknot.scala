@@ -55,7 +55,7 @@ object K {
     }
 
     def toLoop(pairing : Pairing) = {
-        def cuttings(i:Int) = Set(('a'+i).toChar, ('b'+i+1).toChar)
+        def cuttings(i:Int) = Set(('a'+i).toChar, ('b'+i).toChar)
 
         pairing.map { case (over,under) =>
             Crossing(cuttings(over),cuttings(under))
