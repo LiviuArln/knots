@@ -1,52 +1,65 @@
+
+import scala.annotation.tailrec
+
 object K {
     type Pairing = Set[(Int,Int)]
     type PairingGroup = Set[(Pairing, Int)]
 
-    def configurations(kk:Int) = cleanParings((0 to kk*2-1).toSet[Int]).foreach(println)
+    def configurations(kk:Int) = cleanParings((0 to kk*2-1).toSet[Int])
 
-
-    def pairing(l:Set[Int]) = {
-        pairing2(l).map { _._1 }
-    }
-
-    def pairing2(l : Set[Int]) : Set[(Pairing, Set[Int])] = l.flatMap { e1 =>
-        (l - e1).map{ e2 =>
-            (Set((e1, e2)), l - e1 - e2)
+    def pairing(l : Set[Int]):Set[Pairing] = {
+        def pairingAux(remaining:Set[Int]): Set[Pairing] = {
+            if(remaining.size == 2) Set(Set(remaining.head -> remaining.last))
+            else for {
+                origin <- remaining
+                destination <- remaining - origin
+                subPairing <- pairingAux(remaining - origin - destination)
+            } yield subPairing + (origin -> destination)
         }
-    }.flatMap { p1 =>
-        p1._2.headOption.map { _ =>
-            pairing2(p1._2).map { p2 =>
-                (p1._1 ++ p2._1, p2._2)
-            }
-        }.getOrElse(Set(p1))
-    }
 
-
-    
-
-    
+        pairingAux(l)
+    } 
 
     def cleanParings(l:Set[Int]) = { 
-        def cleaner(remaining:Set[Pairing], cleaned:PairingGroup) : PairingGroup = remaining.headOption.map { h =>
-            val rm = rotationsAndMirors(h)
-            cleaner(remaining -- rm, cleaned + ((h, rm.size)))
-        }.getOrElse(cleaned)
+        val size = l.size
 
-        def rotationsAndMirors(pairing:Pairing) = {
-            val size = pairing.size * 2
-            val rotations = (0 to size - 1).toSet[Int].map { d => rotation(pairing, d, size) } 
-            val mirrors = rotations.map(mirror(_,size))
+        @tailrec 
+        def cleaner(toClean:Set[Pairing], cleaned:PairingGroup) : PairingGroup = 
+            if(toClean.isEmpty) cleaned 
+            else {
+                val h = toClean.head
+                val eqv = equivalentPairings(h)
+                cleaner(toClean -- eqv, cleaned + (h -> eqv.size))
+            }
+
+        def equivalentPairings(pairing:Pairing) = {
+            val rotationDeltas = (0 to size - 1).toSet[Int]
+            val rotations = rotationDeltas.map(rotation(pairing)) 
+            val mirrors = rotations.map(mirror)
             rotations ++ mirrors
         }
 
-        def rotation(pairing:Pairing, d:Int, size:Int) = pairing.map { p => 
+        def rotation(pairing:Pairing)(d:Int) = pairing.map { p => 
             ((p._1 + d) % size, (p._2 + d) % size )
         }
 
-        def mirror(pairing:Pairing, size:Int) = pairing.map { p => 
+        def mirror(pairing:Pairing) = pairing.map { p => 
             (size - 1 - p._1, size - 1 - p._2 )
         }
+
         cleaner(pairing(l),Set.empty)
+    }
+
+    case class Crossing(over:Set[Char], under:Set[Char]) {
+
+    }
+
+    def toLoop(pairing : Pairing) = {
+        def cuttings(i:Int) = Set(('a'+i).toChar, ('b'+i+1).toChar)
+
+        pairing.map { case (over,under) =>
+            Crossing(cuttings(over),cuttings(under))
+        }
     }
 
 
