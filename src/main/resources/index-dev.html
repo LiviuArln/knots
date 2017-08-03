@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Example Scala.js application</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Example Scala.js application</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body style="margin: 0px">
-
-<div style="height:500px; width:500px; margin:50px">
-    <canvas style="display: block" id="canvas" width="255" height="255" style="margin:90px"/>
-</div>
+<div id="mainDiv"></div>
 
 <script type="text/javascript" src="../example-fastopt.js"></script>
 <script type="text/javascript" src="/workbench.js"></script>
+
 <script>
-    example.ScalaJSExample().main(document.getElementById('canvas'));
+    example.ScalaJSExample().main(document.getElementById('mainDiv'));
+    for(var i = 1; i <= 13; i++){
+        example.ScalaJSExample().drawLines(3, document.getElementById('canvas'+i));
+    }
 </script>
+
 </body>
 </html>
