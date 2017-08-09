@@ -1,8 +1,13 @@
+package example
+
+import scala.scalajs.js.annotation.JSExport
+
+@JSExport
 object K {
     type Pairing = Set[(Int,Int)]
     type PairingGroup = Set[(Pairing, Int)]
 
-    def configurations(kk:Int) = cleanParings((0 to kk*2-1).toSet[Int]).foreach(println)
+    def configurations(kk:Int) = cleanParings((0 to kk*2-1).toSet[Int])
 
 
     def pairing(l:Set[Int]) = {
@@ -20,11 +25,6 @@ object K {
             }
         }.getOrElse(Set(p1))
     }
-
-
-    
-
-    
 
     def cleanParings(l:Set[Int]) = { 
         def cleaner(remaining:Set[Pairing], cleaned:PairingGroup) : PairingGroup = remaining.headOption.map { h =>
