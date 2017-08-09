@@ -97,8 +97,8 @@ object ScalaJSExample{
 
   def drawCanvas(target: html.Div, idNo: Int): Unit = {
     def renderCanvas: Div = {
-      div(id := "div" + idNo, width := 400, height := 400, margin := 20,
-        canvas(id := "canvas" + idNo, attr("width") := 300, attr("height") := 300, attr("margin") := 50, attr("class") := "circleCanvas")
+      div(id := "div" + idNo, width := 300, height := 300, margin := 20,
+        canvas(id := "canvas" + idNo, attr("width") := 200, attr("height") := 200, attr("margin") := 50, attr("class") := "circleCanvas")
       ).render
     }
 
