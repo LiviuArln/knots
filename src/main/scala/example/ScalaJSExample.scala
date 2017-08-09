@@ -120,6 +120,6 @@ object ScalaJSExample{
 
     for(it <- 1 to ps.size) yield drawCanvas(target,it)
 
-    (canvases(target) zip ps.map(_._1)).foreach(drawLines);
+    (canvases(target) zip ps.map(_._1).filter(K.reduce(_).isEmpty)).foreach(drawLines);
   }
 }
