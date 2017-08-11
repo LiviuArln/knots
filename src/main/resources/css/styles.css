@@ -1,0 +1,13 @@
+@page
+{
+    size: auto;   /* auto is the initial value */
+
+    /* this affects the margin in the printer settings */
+    margin: 2cm 2cm 2cm 2cm;
+}
+
+body
+{
+    /* this affects the margin on the content before sending to printer */
+    margin: 25px;
+}
