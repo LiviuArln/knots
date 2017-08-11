@@ -1,5 +1,4 @@
 package example
-import example.ScalaJSExample.pairings
 
 import scala.scalajs.js.annotation.JSExport
 import org.scalajs.dom.{CanvasRenderingContext2D, html}
@@ -17,7 +16,7 @@ object ScalaJSExample{
   }
 
   @JSExport
-  def drawLines(canvasWithPairing:(html.Canvas, K.Pairing)) = {
+  def drawLines(canvasWithPairing:(html.Canvas, K.PairingSet)) = {
     val (canvas, pairing) = canvasWithPairing
     val context = canvas.getContext("2d")
       .asInstanceOf[dom.CanvasRenderingContext2D]
@@ -65,17 +64,16 @@ object ScalaJSExample{
     ctx.lineTo(x2, y2)
     ctx.stroke
     var startRadians = Math.atan((y2 - y1) / (x2 - x1))
-    if (x2 > x1) {
-      startRadians += -90 * Math.PI / 180
+    if (x2 >= x1) {
+      startRadians += -Math.PI / 2
     } else
-      startRadians += 90 * Math.PI / 180
+      startRadians += Math.PI / 2
     drawArrowhead(canvas, x1, y1, startRadians)
 
   }
 
   def drawArrowhead(canvas: html.Canvas, x: Double, y:Double, radians: Double) = {
-    val ctx = canvas.getContext("2d")
-      .asInstanceOf[dom.CanvasRenderingContext2D]
+    val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
 
     ctx.save
     ctx.beginPath
@@ -87,24 +85,16 @@ object ScalaJSExample{
     ctx.closePath
     ctx.restore
     ctx.fill
-
-  }
-
-  @JSExport
-  def pairings(n:Int) = {
-    K.configurations(n)
   }
 
   def drawCanvas(target: html.Div, idNo: Int): Unit = {
     def renderCanvas: Div = {
-      div(id := "div" + idNo, width := 300, height := 300, margin := 20,
+      div(id := "div" + idNo, width := 220, height := 220, margin := 20,
         canvas(id := "canvas" + idNo, attr("width") := 200, attr("height") := 200, attr("margin") := 50, attr("class") := "circleCanvas")
       ).render
     }
 
     target.appendChild(renderCanvas)
-
-
   }
 
   def canvases(target: html.Div): Seq[html.Canvas] = {
@@ -116,10 +106,11 @@ object ScalaJSExample{
 
   @JSExport
   def main(target: html.Div): Unit = {
-    val ps = pairings(3)
+    import K._
+    val ps = K.configurations(3).map(_._1).filter(!_.isReduceable).filter(!_.isImpossible)
 
     for(it <- 1 to ps.size) yield drawCanvas(target,it)
 
-    (canvases(target) zip ps.map(_._1).filter(K.reduce(_).isEmpty)).foreach(drawLines);
+    (canvases(target) zip ps).foreach(drawLines);
   }
 }
